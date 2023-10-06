@@ -18,6 +18,16 @@ struct CardView: View {
     @State private var isShowingAnswer = false
     @State private var offset = CGSize.zero
     
+    var cardFill: Color {
+        if offset.width > 0 {
+            return .green
+        } else if offset.width < 0 {
+            return .red
+        } else {
+            return .white
+        }
+    }
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25, style: .continuous)
@@ -31,7 +41,7 @@ struct CardView: View {
                     differentiateWithoutColor
                     ? nil
                     : RoundedRectangle(cornerRadius: 25, style: .continuous)
-                        .fill(offset.width > 0 ? .green : .red)
+                        .fill(cardFill)
                 )
                 .shadow(radius: 10)
             VStack{
