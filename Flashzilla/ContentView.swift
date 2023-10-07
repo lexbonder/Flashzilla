@@ -28,6 +28,7 @@ struct ContentView: View {
     
     @State private var showingEditScreen = false
     
+    // Error: The compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
     var body: some View {
         ZStack {
             Image("background")
@@ -43,15 +44,20 @@ struct ContentView: View {
                     .clipShape(Capsule())
                 
                 ZStack {
-                    ForEach(0..<cards.count, id: \.self) { index in
-                        CardView(card: cards[index]) {
+                    // Switching this to use the card itself instead of the ID since its now identifyable
+                    ForEach(cards) { card in
+                        CardView(card: card) { isWrongAnswer in
                             withAnimation {
-                                removeCard(at: index)
+                                // Remove card by ID instead of by index.
+                                removeCard(at: cards.firstIndex(where: {$0.id == card.id}))
+                            }
+                            if isWrongAnswer {
+                                cards.insert(card, at: 0)
                             }
                         }
-                        .stacked(at: index, in: cards.count)
-                        .allowsHitTesting(index == cards.count - 1)
-                        .accessibilityHidden(index < cards.count - 1)
+                        .stacked(at: cards.firstIndex(where: {$0.id == card.id}), in: cards.count)
+                        .allowsHitTesting(cards.firstIndex(where: {$0.id == card.id}) == cards.count - 1)
+                        .accessibilityHidden(cards.firstIndex(where: {$0.id == card.id}) < cards.count - 1)
                     }
                 }
                 .allowsHitTesting(timeRemaining > 0)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CardView: View {
     let card: Card
-    var removal: (() -> Void)? = nil
+    var removal: ((_ isWrongAnswer: Bool) -> Void)? = nil
     
     @State private var feedback = UINotificationFeedbackGenerator()
     
@@ -79,10 +79,11 @@ struct CardView: View {
                     if abs(offset.width) > 100 {
                         if offset.width > 0 {
 //                            feedback.notificationOccurred(.success) // Pepsi challenge - only good in small doses, remove the success buzz.
+                            removal?(false)
                         } else {
                             feedback.notificationOccurred(.error)
+                            removal?(true)
                         }
-                        removal?()
                     } else {
                         offset = .zero
                     }
